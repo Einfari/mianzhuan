@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import os
 
 baseUrl = "http://mianzhuan.wddsnxn.org/"
 
@@ -23,7 +24,7 @@ def getContent(url):
     for span in booklistContents:
         content = {}
         linkDom = span.find("a")
-        if (linkDom == None):
+        if linkDom == None:
             continue
         content["title"] = linkDom.text
         content["url"] = linkDom["href"]
@@ -32,7 +33,11 @@ def getContent(url):
 
 
 def save2File(contents):
-    with open("./data/mianzhuan.txt", "a+", encoding="utf-8") as f:
+    dist = "./data/mianzhuan.txt"
+    if os.path.exists(dist):
+        os.remove(dist)
+        print("Original file has been removed.")
+    with open(dist, "a+", encoding="utf-8") as f:
         for content in contents:
             f.write("{} \t {} \t \n".format(
                 content["title"], content["url"]))
@@ -41,6 +46,7 @@ def save2File(contents):
 def main(baseUrl):
     contents = getContent(baseUrl)
     save2File(contents)
+    print("FINISHED.")
 
 
 if (__name__ == "__main__"):
