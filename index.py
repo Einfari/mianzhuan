@@ -57,6 +57,7 @@ def savePerChapter2File(contents):
                 continue
             with open(dist, "a+", encoding="utf-8") as f:
                 f.write(chapterContent)
+                print(str(count) + "-" + title + ".txt" + " has been saved.")
         count += 1
 
 
