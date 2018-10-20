@@ -4,6 +4,7 @@ import os
 
 baseUrl = "http://mianzhuan.wddsnxn.org/"
 
+
 def getHtmlText(url):
     try:
         r = requests.get(url)
@@ -14,7 +15,7 @@ def getHtmlText(url):
         return "Error occurs."
 
 
-def getContent(url):
+def getContents(url):
     contents = []
     html = getHtmlText(url)
 
@@ -32,11 +33,40 @@ def getContent(url):
     return contents
 
 
+def getChapterContent(url):
+    perHtml = getHtmlText(url).replace("<br/>", "\n")
+    perSoup = BeautifulSoup(perHtml, "lxml")
+    chapterDom = perSoup.find("div", class_="bookcontent")
+    if chapterDom == None:
+        return None
+    return chapterDom.text
+
+
+def savePerChapter2File(contents):
+    distFolder = "./data/mianzhuan/"
+    if not os.path.exists(distFolder):
+        os.mkdir(distFolder)
+    count = 1
+    for content in contents:
+        title = content["title"]
+        url = content["url"]
+        dist = distFolder + str(count) + "-" + title + ".txt"
+        if not os.path.exists(dist):
+            chapterContent = getChapterContent(url)
+            if chapterContent == None:
+                continue
+            with open(dist, "a+", encoding="utf-8") as f:
+                f.write(chapterContent)
+        count += 1
+
+
 def save2File(contents):
-    dist = "./data/mianzhuan.txt"
+    distFolder = "./data/mianzhuan/"
+    if not os.path.exists(distFolder):
+        os.mkdir(distFolder)
+    dist = distFolder + "index.txt"
     if os.path.exists(dist):
         os.remove(dist)
-        print("Original file has been removed.")
     with open(dist, "a+", encoding="utf-8") as f:
         for content in contents:
             f.write("{} \t {} \t \n".format(
@@ -44,8 +74,9 @@ def save2File(contents):
 
 
 def main(baseUrl):
-    contents = getContent(baseUrl)
+    contents = getContents(baseUrl)
     save2File(contents)
+    savePerChapter2File(contents)
     print("FINISHED.")
 
 
