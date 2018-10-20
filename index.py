@@ -45,7 +45,7 @@ def getChapterContent(url):
 def savePerChapter2File(contents):
     distFolder = "./data/mianzhuan/"
     if not os.path.exists(distFolder):
-        os.mkdir(distFolder)
+        os.makedirs(distFolder)
     count = 1
     for content in contents:
         title = content["title"]
@@ -64,7 +64,7 @@ def savePerChapter2File(contents):
 def save2File(contents):
     distFolder = "./data/mianzhuan/"
     if not os.path.exists(distFolder):
-        os.mkdir(distFolder)
+        os.makedirs(distFolder)
     dist = distFolder + "index.txt"
     if os.path.exists(dist):
         os.remove(dist)
